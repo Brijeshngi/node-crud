@@ -2,32 +2,31 @@ import { Router } from "express";
 const router = Router();
 import Product from "../models/Product.js";
 
-// Create
-router.post("/post", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const product = new Product(req.body);
-    const saved = await product.save();
-    res.status(201).json(saved);
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
 // Read All
-router.get("/get", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const products = await Product.find();
-    res.json(products);
+    const Products = await Product.find();
+    res.json(Products);
   } catch (err) {
-    res.status(500).json({ error: "no data" });
+    res.status(500).json({ error: err.message });
   }
 });
 
 // Read One
 router.get("/:id", async (req, res) => {
   try {
-    const product = await findById(req.params.id);
-    if (!product) return res.status(404).json({ error: "Not found" });
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: "Product not found" });
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -37,11 +36,11 @@ router.get("/:id", async (req, res) => {
 // Update
 router.put("/:id", async (req, res) => {
   try {
-    const updated = await findByIdAndUpdate(req.params.id, req.body, {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!updated) return res.status(404).json({ error: "Not found" });
-    res.json(updated);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -50,9 +49,9 @@ router.put("/:id", async (req, res) => {
 // Delete
 router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Not found" });
-    res.json({ message: "Deleted successfully" });
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json({ message: "Product deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
